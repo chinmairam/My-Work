@@ -1,0 +1,197 @@
+SQL> select * from PC;
+
+MODEL                     SPEED        RAM         HD         CD      PRICE
+-------------------- ---------- ---------- ---------- ---------- ----------
+PC112                         2        256         60         52      40000
+PC122                         2        256         60         48      42000
+PC132                         1        128        100         68      50000
+PC134                         1        512         60         68      80000
+
+SQL> select * from LAPTOP;
+
+MODEL                     SPEED        RAM         HD     SCREEN      PRICE
+-------------------- ---------- ---------- ---------- ---------- ----------
+LP113                         1         64         40         14      59000
+LP123                         2        128         60         16      72000
+LP133                         2        256         80         17     100000
+LP114                         2        128         40         17      45000
+
+SQL> select * from PRINTER;
+
+MODEL                COLO       TYPE            PRICE
+-------------------- ---------- ---------- ----------
+PR114                true       ink             17000
+PR124                false      dot             12000
+PR134                true       laser           17000
+
+1)
+SQL> select max(PRICE)-min(PRICE) as Difference from LAPTOP;
+
+DIFFERENCE
+----------
+     55000
+
+2)
+SQL> select STDDEV(PRICE) from PC;
+
+STDDEV(PRICE)
+-------------
+   18511.2578
+
+SQL> select VARIANCE(PRICE) from PC;
+
+VARIANCE(PRICE)
+---------------
+      342666667
+
+3)
+SQL> select to_char(sysdate,'MON-YYYY') from dual;
+
+TO_CHAR(SYSDATE,'
+-----------------
+FEB-2020
+
+SQL> select to_char(sysdate,'MONTH DD YYYY') from dual;
+
+TO_CHAR(SYSDATE,'MONTHDDYYYY')
+--------------------------------------------
+FEBRUARY  21 2020
+
+SQL> select to_char(sysdate,'DD-MM-YY HH:MI:SS')"TODAY"  from dual;
+
+TODAY
+-----------------
+21-02-20 09:24:42
+
+4)
+SQL> select replace('sql programming','mming','m') from dual;
+
+REPLACE('SQ
+-----------
+sql program
+
+SQL> select translate('sql programming','pspk','abcd') from dual;
+
+TRANSLATE('SQLP
+---------------
+bql arogramming
+
+SQL> select decode(MODEL,'LP113','Laptop113','LP123','Laptop123') from LAPTOP;
+
+DECODE(MO
+---------
+Laptop113
+Laptop123
+
+5)
+SQL> select lpad(to_char(PRICE,'99,999'),9,'Rs .') from PRINTER;
+
+LPAD(TO_CHAR(PRICE,'99,999'),9,'RS.'
+------------------------------------
+Rs 17,000
+Rs 12,000
+Rs 17,000
+
+SQL> select to_char(Price,'$99999') PRICE from PRINTER;
+
+PRICE
+-------
+ $17000
+ $12000
+ $17000
+
+---------------------------------------------------------------------------------------------------------------------------
+SQL> select * from ProductInfo;
+
+MAKER      MODEL      TYPE
+---------- ---------- -----
+HCL        PC112      PC
+HCL        LP113      LP
+ZENITH     PR114      PR
+WIPRO      PC122      PC
+WIPRO      LP123      LP
+WIPRO      PR124      PR
+IBM        PC134      PC
+HCL        LP114      LP
+IBM        PC132      PC
+IBM        LP133      LP
+IBM        PR134      PR
+
+11 rows selected.
+
+
+1)
+SQL>  select * from Printer where Price in (select Price from Printer where Model in(Select Model from ProductInfo where Type='PR' and Maker='IBM'));
+
+MODEL                COLO       TYPE            PRICE
+-------------------- ---------- ---------- ----------
+PR134                true       laser           17000
+PR114                true       ink             17000
+
+2)
+SQL> select * from LAPTOP where SCREEN=(Select SCREEN from LAPTOP where MODEL='LP114');
+
+MODEL                     SPEED        RAM         HD     SCREEN      PRICE
+-------------------- ---------- ---------- ---------- ---------- ----------
+LP133                         2        256         80         17     100000
+LP114                         2        128         40         17      45000
+
+3)
+SQL> Select RAM,Count(RAM) from PC group by RAM;
+
+       RAM COUNT(RAM)
+---------- ----------
+       128          1
+       512          1
+       256          2
+
+4)
+SQL> Select HD,Count(HD) from PC group by HD;
+
+        HD  COUNT(HD)
+---------- ----------
+       100          1
+        60          3
+
+5)
+SQL> Select HD,Count(HD) from PC group by HD having Count(HD)>2;
+
+        HD  COUNT(HD)
+---------- ----------
+        60          3
+----------------------------------------------------------------------------------------------------------------
+SQL> select * from Sales_Transaction;
+
+PROD_C DATE_OF_SALE                          QTY      PRICE
+------ ------------------------------ ---------- ----------
+P001   01-Jan-2007                            10       1000
+P002   01-Jan-2007                            10       1000
+P003   01-Jan-2007                            10       1000
+P004   02-Jan-2007                            10       1000
+P001   02-Jan-2007                            10       1000
+
+SQL> select * from VAT_Calculation;
+
+DATE_OF_SALE                   PROD_CO        VAT
+------------------------------ ------- ----------
+01-Jan-2007                    P001          1000
+01-Jan-2007                    P002          1000
+
+
+SQL>  create or replace trigger pspk1
+      after insert
+      on Sales_Transaction
+      for each row
+      declare
+      Date_Of_Sale DATE;
+      Prod_Code varchar(5);
+      VAT number(10);
+      begin
+      Date_Of_Sale:=:new.Date_Of_Sale;
+      Prod_Code:=:new.Prod_Code;
+      VAT:=0.10*:new.Qty*:new.Price;
+      insert into VAT_Calculation values(Date_Of_Sale,Prod_Code,VAT);
+      end;
+      /
+
+  

@@ -1,0 +1,32 @@
+man cd
+which cd
+ls -R
+ls -R -s
+man zip
+rufo
+which rufo
+sudo bash=invokes new shell
+whoami
+exit
+rm -rf /=Removes all directories
+vi test.txt
+ls test.txt
+ls -l test.txt
+cat test.txt
+vi test.txt
+ruby
+which ruby
+ls -l=gives permissions of all directories.
+sudo chown p.txt   p=user
+ls -l
+sudo chgrp p test.txt
+ls -l
+rvm list known = shows all ruby versions
+ls -a=shows all hidden directories
+cd .rvm
+ls -a
+ls bin
+ls src
+cd rubies
+rvm fix-permissions
+gem install pg

@@ -1,0 +1,7 @@
+a=[1,2,3]
+a.class
+Array.instance_of?Enumerable
+class MyCollection
+include Enumerable
+end
+M
